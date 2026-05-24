@@ -1,0 +1,1521 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#2d4a1e">
+<title>高分子材料改性 · 互动课堂</title>
+<style>
+/* ══════════════════════════════════════════
+   星露谷风格 · 高分子互动课堂
+   Stardew Valley Inspired CSS
+══════════════════════════════════════════ */
+
+@import url('https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&display=swap');
+
+:root {
+  --sdv-brown:    #5c3d1e;
+  --sdv-tan:      #c8a86a;
+  --sdv-cream:    #f5e6c8;
+  --sdv-green:    #4a7c3f;
+  --sdv-dkgreen:  #2d4a1e;
+  --sdv-ltgreen:  #8db87a;
+  --sdv-blue:     #4a6fa5;
+  --sdv-ltblue:   #8ab4d8;
+  --sdv-red:      #8b2f2f;
+  --sdv-gold:     #d4a818;
+  --sdv-shadow:   rgba(0,0,0,0.6);
+  --sdv-ui-bg:    rgba(26,18,8,0.92);
+  --pixel: 2px;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+/* ── 像素字体渲染 ── */
+body {
+  font-family: 'Ma Shan Zheng', 'ZCOOL KuaiLe', 'Microsoft YaHei', sans-serif;
+  background: var(--sdv-dkgreen);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  overflow: hidden;
+  image-rendering: pixelated;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+/* ══════ 主容器 - 手机优先 ══════ */
+#game-wrap {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  max-width: 480px;
+  max-height: 850px;
+  overflow: hidden;
+  background: #1a1208;
+}
+
+@media (min-width: 500px) {
+  body { background: #1a1208; }
+  #game-wrap {
+    border: 4px solid var(--sdv-brown);
+    box-shadow:
+      0 0 0 2px var(--sdv-tan),
+      0 0 0 4px var(--sdv-brown),
+      0 20px 60px rgba(0,0,0,0.8);
+    border-radius: 4px;
+  }
+}
+
+/* ══════ 背景场景 ══════ */
+#scene-bg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center top;
+  transition: opacity 0.6s ease;
+  z-index: 0;
+  image-rendering: pixelated;
+}
+#scene-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    transparent 50%,
+    rgba(10,7,2,0.5) 75%,
+    rgba(10,7,2,0.85) 100%
+  );
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* ══════ 标题页 ══════ */
+#title-screen {
+  position: absolute;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: opacity 0.5s ease;
+  background: #0d0a04;
+}
+#title-screen.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+#title-bg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  opacity: 0.7;
+  image-rendering: pixelated;
+}
+#title-content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  padding: 20px;
+}
+.title-badge {
+  display: inline-block;
+  background: var(--sdv-dkgreen);
+  border: 3px solid var(--sdv-tan);
+  border-radius: 0;
+  padding: 6px 16px;
+  color: var(--sdv-tan);
+  font-size: 0.75em;
+  letter-spacing: 0.15em;
+  margin-bottom: 12px;
+  /* 像素框阴影 */
+  box-shadow: 3px 3px 0 var(--sdv-brown), -1px -1px 0 rgba(255,255,255,0.1);
+}
+.title-main {
+  font-size: clamp(1.6em, 7vw, 2.4em);
+  color: var(--sdv-cream);
+  text-shadow:
+    2px 2px 0 var(--sdv-brown),
+    4px 4px 0 rgba(0,0,0,0.5);
+  line-height: 1.2;
+  margin-bottom: 6px;
+}
+.title-sub {
+  font-size: clamp(0.85em, 3.5vw, 1.05em);
+  color: var(--sdv-ltgreen);
+  text-shadow: 1px 1px 0 #000;
+  margin-bottom: 30px;
+}
+.title-start-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--sdv-green);
+  border: 3px solid var(--sdv-cream);
+  color: var(--sdv-cream);
+  padding: 12px 28px;
+  font-family: inherit;
+  font-size: 1.1em;
+  cursor: pointer;
+  /* 像素按钮 */
+  box-shadow: 4px 4px 0 var(--sdv-dkgreen);
+  transition: transform 0.1s, box-shadow 0.1s;
+  animation: pulse-btn 2s ease-in-out infinite;
+}
+.title-start-btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 var(--sdv-dkgreen);
+}
+@keyframes pulse-btn {
+  0%,100% { box-shadow: 4px 4px 0 var(--sdv-dkgreen); }
+  50% { box-shadow: 4px 4px 0 var(--sdv-dkgreen), 0 0 15px var(--sdv-ltgreen); }
+}
+.title-credit {
+  position: absolute;
+  bottom: 20px;
+  left: 0; right: 0;
+  text-align: center;
+  color: rgba(200,168,106,0.5);
+  font-size: 0.72em;
+  z-index: 2;
+}
+
+/* ══════ 角色立绘区 ══════ */
+#character-area {
+  position: absolute;
+  bottom: 220px;
+  left: 0; right: 0;
+  height: 240px;
+  z-index: 5;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  pointer-events: none;
+}
+#char-sprite {
+  height: 100%;
+  max-width: 200px;
+  object-fit: contain;
+  image-rendering: pixelated;
+  filter: drop-shadow(3px 3px 0 rgba(0,0,0,0.5));
+  transition: transform 0.3s ease, opacity 0.4s ease;
+}
+#char-sprite.hidden { opacity: 0; }
+#char-sprite.talking {
+  animation: char-talk 0.4s ease-in-out infinite alternate;
+}
+@keyframes char-talk {
+  from { transform: translateY(0); }
+  to   { transform: translateY(-3px); }
+}
+#char-sprite.happy {
+  animation: char-happy 0.5s ease-in-out 3;
+}
+@keyframes char-happy {
+  0%   { transform: scale(1) rotate(0deg); }
+  25%  { transform: scale(1.05) rotate(-2deg); }
+  75%  { transform: scale(1.05) rotate(2deg); }
+  100% { transform: scale(1) rotate(0deg); }
+}
+
+/* ══════ 设备/图片展示区 ══════ */
+#scene-image-area {
+  position: absolute;
+  top: 5%;
+  left: 5%; right: 5%;
+  height: 45%;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+  pointer-events: none;
+}
+#scene-image-area.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+#scene-image {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  image-rendering: pixelated;
+  border: 3px solid var(--sdv-tan);
+  box-shadow:
+    4px 4px 0 var(--sdv-brown),
+    0 8px 20px rgba(0,0,0,0.5);
+  background: rgba(0,0,0,0.3);
+}
+#scene-svg {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+/* ══════ 知识卡片 ══════ */
+#knowledge-panel {
+  position: absolute;
+  inset: 10px;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+#knowledge-panel.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+.knowledge-card {
+  background: var(--sdv-ui-bg);
+  border: 3px solid var(--sdv-tan);
+  box-shadow:
+    5px 5px 0 var(--sdv-brown),
+    inset 0 0 0 1px rgba(200,168,106,0.1);
+  padding: 20px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+}
+.kc-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid rgba(200,168,106,0.3);
+}
+.kc-icon { font-size: 1.8em; }
+.kc-title {
+  color: var(--sdv-tan);
+  font-size: 1.1em;
+  text-shadow: 1px 1px 0 #000;
+}
+.kc-body {
+  color: var(--sdv-cream);
+  font-size: 0.9em;
+  line-height: 1.75;
+}
+.kc-body p { margin-bottom: 10px; }
+.kc-body b { color: var(--sdv-gold); }
+.kc-close-btn {
+  display: block;
+  width: 100%;
+  margin-top: 14px;
+  padding: 10px;
+  background: var(--sdv-green);
+  border: 3px solid var(--sdv-cream);
+  color: var(--sdv-cream);
+  font-family: inherit;
+  font-size: 1em;
+  cursor: pointer;
+  box-shadow: 3px 3px 0 var(--sdv-dkgreen);
+  transition: transform 0.1s, box-shadow 0.1s;
+}
+.kc-close-btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0 var(--sdv-dkgreen);
+}
+
+/* ══════ 对话框 ══════ */
+#dialogue-area {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  z-index: 20;
+  padding: 0 10px 10px;
+}
+.dialogue-box {
+  background: var(--sdv-ui-bg);
+  border: 3px solid var(--sdv-tan);
+  box-shadow:
+    4px 4px 0 var(--sdv-brown),
+    inset 0 0 0 1px rgba(200,168,106,0.08);
+  padding: 12px 14px 14px;
+  position: relative;
+  min-height: 110px;
+}
+.dialogue-box::before {
+  content: '';
+  position: absolute;
+  top: -3px; left: -3px;
+  width: 10px; height: 10px;
+  background: var(--sdv-tan);
+}
+.dialogue-box::after {
+  content: '';
+  position: absolute;
+  bottom: -3px; right: -3px;
+  width: 10px; height: 10px;
+  background: var(--sdv-tan);
+}
+
+/* 角色名牌 */
+.speaker-name {
+  display: inline-block;
+  background: var(--sdv-green);
+  border: 2px solid var(--sdv-tan);
+  color: var(--sdv-cream);
+  padding: 3px 12px;
+  font-size: 0.85em;
+  margin-bottom: 8px;
+  box-shadow: 2px 2px 0 var(--sdv-dkgreen);
+}
+.speaker-name.system-tag {
+  background: var(--sdv-blue);
+  border-color: var(--sdv-ltblue);
+}
+.speaker-name.report-tag {
+  background: #4a6b4a;
+  border-color: var(--sdv-ltgreen);
+}
+
+/* 对话文字 */
+#dialogue-text {
+  color: var(--sdv-cream);
+  font-size: clamp(0.85em, 3.5vw, 1em);
+  line-height: 1.7;
+  min-height: 50px;
+}
+#dialogue-text b { color: var(--sdv-gold); }
+#dialogue-text .good { color: #7ddf90; }
+#dialogue-text .warn { color: #e8d5a0; }
+#dialogue-text .bad  { color: #e06060; }
+
+/* 继续提示 */
+#next-hint {
+  position: absolute;
+  bottom: 8px;
+  right: 12px;
+  color: var(--sdv-tan);
+  font-size: 0.8em;
+  animation: blink-hint 1.2s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes blink-hint {
+  0%,100% { opacity: 0.3; transform: translateX(0); }
+  50%     { opacity: 1;   transform: translateX(3px); }
+}
+
+/* ══════ 选项区域 ══════ */
+#choices-area {
+  position: absolute;
+  bottom: 140px; left: 0; right: 0;
+  z-index: 30;
+  padding: 8px 10px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  background: linear-gradient(to top, rgba(10,7,2,0.85) 60%, transparent);
+  border-top: 2px solid rgba(200,168,106,0.25);
+  max-height: 55vh;
+  overflow-y: auto;
+}
+#choices-area.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+.choice-btn {
+  width: 100%;
+  background: rgba(26,18,8,0.9);
+  border: 2px solid var(--sdv-tan);
+  color: var(--sdv-cream);
+  padding: 10px 14px;
+  font-family: inherit;
+  font-size: clamp(0.8em, 3.2vw, 0.92em);
+  text-align: left;
+  cursor: pointer;
+  box-shadow: 3px 3px 0 var(--sdv-brown);
+  transition: all 0.1s ease;
+  line-height: 1.4;
+  position: relative;
+  overflow: hidden;
+}
+.choice-btn::before {
+  content: '▶';
+  color: var(--sdv-tan);
+  margin-right: 8px;
+  font-size: 0.7em;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+.choice-btn:hover::before,
+.choice-btn:focus::before { opacity: 1; }
+.choice-btn:hover, .choice-btn:focus {
+  background: rgba(74,124,63,0.85);
+  border-color: var(--sdv-cream);
+  outline: none;
+}
+.choice-btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0 var(--sdv-brown);
+}
+.choice-hint {
+  display: block;
+  color: rgba(200,168,106,0.65);
+  font-size: 0.8em;
+  margin-top: 2px;
+}
+
+/* ══════ HUD - 路径/进度指示 ══════ */
+#hud {
+  position: absolute;
+  top: 8px; right: 8px;
+  z-index: 15;
+  display: flex;
+  gap: 5px;
+  opacity: 0;
+  transition: opacity 0.5s;
+}
+#hud.show { opacity: 1; }
+.hud-dot {
+  width: 9px; height: 9px;
+  border: 2px solid var(--sdv-brown);
+  background: var(--sdv-brown);
+  transition: background 0.3s, border-color 0.3s;
+}
+.hud-dot.done { background: var(--sdv-tan); border-color: var(--sdv-cream); }
+.hud-dot.fail { background: var(--sdv-red); border-color: #e06060; }
+
+/* ══════ 评分显示 ══════ */
+#score-display {
+  position: absolute;
+  top: 8px; left: 8px;
+  z-index: 15;
+  background: var(--sdv-ui-bg);
+  border: 2px solid var(--sdv-tan);
+  padding: 4px 10px;
+  color: var(--sdv-gold);
+  font-size: 0.78em;
+  box-shadow: 2px 2px 0 var(--sdv-brown);
+  opacity: 0;
+  transition: opacity 0.5s;
+}
+#score-display.show { opacity: 1; }
+
+/* ══════ 结果画面 ══════ */
+#result-screen {
+  position: absolute;
+  inset: 0;
+  z-index: 90;
+  background: rgba(0,0,0,0.92);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.6s ease;
+}
+#result-screen.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+.result-card {
+  background: var(--sdv-ui-bg);
+  border: 3px solid var(--sdv-tan);
+  box-shadow: 6px 6px 0 var(--sdv-brown);
+  padding: 24px;
+  width: 100%;
+  max-width: 380px;
+  text-align: center;
+}
+.result-grade {
+  font-size: 3.5em;
+  margin: 10px 0;
+}
+.result-title {
+  color: var(--sdv-tan);
+  font-size: 1.3em;
+  margin-bottom: 12px;
+  text-shadow: 2px 2px 0 #000;
+}
+.result-detail {
+  color: var(--sdv-cream);
+  font-size: 0.88em;
+  line-height: 1.8;
+  text-align: left;
+  background: rgba(0,0,0,0.3);
+  border: 1px solid rgba(200,168,106,0.2);
+  padding: 12px;
+  margin-bottom: 14px;
+}
+.result-detail b { color: var(--sdv-gold); }
+.result-score-bar {
+  height: 12px;
+  background: var(--sdv-brown);
+  border: 2px solid var(--sdv-tan);
+  margin: 8px 0 14px;
+  position: relative;
+  overflow: hidden;
+}
+.result-score-fill {
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  background: linear-gradient(to right, var(--sdv-green), var(--sdv-gold));
+  transition: width 1s ease 0.5s;
+}
+.result-path {
+  color: rgba(200,168,106,0.7);
+  font-size: 0.78em;
+  margin-bottom: 14px;
+  line-height: 1.6;
+}
+.restart-btn {
+  width: 100%;
+  background: var(--sdv-green);
+  border: 3px solid var(--sdv-cream);
+  color: var(--sdv-cream);
+  padding: 12px;
+  font-family: inherit;
+  font-size: 1em;
+  cursor: pointer;
+  box-shadow: 4px 4px 0 var(--sdv-dkgreen);
+  transition: transform 0.1s, box-shadow 0.1s;
+}
+.restart-btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 var(--sdv-dkgreen);
+}
+
+/* ══════ 打字机动效 ══════ */
+@keyframes cursor-blink {
+  0%,100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+.typing-cursor {
+  display: inline-block;
+  width: 2px;
+  height: 1em;
+  background: var(--sdv-tan);
+  vertical-align: middle;
+  margin-left: 2px;
+  animation: cursor-blink 0.7s ease-in-out infinite;
+}
+
+/* ══════ 通知提示 ══════ */
+#toast {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: var(--sdv-ui-bg);
+  border: 3px solid var(--sdv-gold);
+  box-shadow: 5px 5px 0 var(--sdv-brown);
+  padding: 14px 24px;
+  color: var(--sdv-cream);
+  font-size: 1em;
+  z-index: 80;
+  text-align: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+}
+#toast.show { opacity: 1; }
+
+/* ══════ 响应式微调 ══════ */
+@media (max-height: 680px) {
+  #character-area { height: 190px; bottom: 200px; }
+  .dialogue-box { min-height: 95px; padding: 9px 12px 12px; }
+  #dialogue-text { font-size: 0.82em; }
+  .choice-btn { padding: 8px 12px; }
+}
+@media (min-width: 500px) and (min-height: 700px) {
+  #character-area { height: 260px; }
+}
+
+/* ══════ 滚动条美化 ══════ */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--sdv-brown); }
+::-webkit-scrollbar-thumb { background: var(--sdv-tan); }
+
+/* ══════ 像素风装饰 ══════ */
+.pixel-corner-tl::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 8px; height: 8px;
+  border-top: 3px solid var(--sdv-tan);
+  border-left: 3px solid var(--sdv-tan);
+}
+</style>
+</head>
+<body>
+<div id="game-wrap">
+  <!-- 背景场景 -->
+  <div id="scene-bg"></div>
+  <div id="scene-overlay"></div>
+
+  <!-- ── 标题页 ── -->
+  <div id="title-screen">
+    <div id="title-bg"></div>
+    <div id="title-content">
+      <div class="title-badge">📚 《高分子材料改性》互动课堂</div>
+      <div class="title-main">聚合物共混改性</div>
+      <div class="title-sub">汽车保险杠材料开发实战</div>
+      <button class="title-start-btn" onclick="startGame()">
+        ▶ 开始挑战
+      </button>
+    </div>
+    <div class="title-credit">河南大学功能材料中心 · 课堂互动案例</div>
+  </div>
+
+  <!-- ── HUD ── -->
+  <div id="hud"></div>
+  <div id="score-display">⭐ 0 分</div>
+
+  <!-- ── 场景图片 ── -->
+  <div id="scene-image-area">
+    <img id="scene-image" src="" alt="" style="display:none">
+    <div id="scene-svg"></div>
+  </div>
+
+  <!-- ── 角色立绘 ── -->
+  <div id="character-area">
+    <img id="char-sprite" src="" alt="王工" class="hidden">
+  </div>
+
+  <!-- ── 知识卡片 ── -->
+  <div id="knowledge-panel">
+    <div class="knowledge-card">
+      <div class="kc-header">
+        <span class="kc-icon" id="kc-icon">📚</span>
+        <span class="kc-title" id="kc-title"></span>
+      </div>
+      <div class="kc-body" id="kc-body"></div>
+      <button class="kc-close-btn" onclick="closeKnowledge()">✅ 明白了，继续！</button>
+    </div>
+  </div>
+
+  <!-- ── 对话区域 ── -->
+  <div id="dialogue-area">
+    <div class="dialogue-box" id="dialogue-box" onclick="handleDialogueClick()">
+      <div class="speaker-name" id="speaker-tag">王工</div>
+      <div id="dialogue-text"></div>
+      <div id="next-hint">▶▶</div>
+    </div>
+  </div>
+
+  <!-- ── 选项区域 ── -->
+  <div id="choices-area"></div>
+
+  <!-- ── 结果画面 ── -->
+  <div id="result-screen">
+    <div class="result-card">
+      <div class="result-grade" id="result-grade">🏆</div>
+      <div class="result-title" id="result-title"></div>
+      <div class="result-score-bar">
+        <div class="result-score-fill" id="result-fill" style="width:0%"></div>
+      </div>
+      <div class="result-detail" id="result-detail"></div>
+      <div class="result-path" id="result-path"></div>
+      <button class="restart-btn" onclick="restartGame()">🔄 重新挑战</button>
+    </div>
+  </div>
+
+  <!-- ── 提示Toast ── -->
+  <div id="toast"></div>
+</div>
+
+<script>
+// ════════════════════════════════════════════════
+//  图片资源映射
+// ════════════════════════════════════════════════
+const IMGS = {
+  // 角色表情（已重命名为语义化文件名）
+  wang_normal:  'assets/wang_normal.png',
+  wang_happy:   'assets/wang_happy.png',
+  wang_worry:   'assets/wang_worry.png',
+  wang_sad:     'assets/wang_normal.png', // 复用（暂无失望表情，用普通代替）
+
+  // 设备图片
+  twin_screw:   'assets/machine_twin.png',
+  int_mixer:    'assets/machine_mixer.png',
+  single_screw: 'assets/machine_single.png',
+
+  // 背景场景
+  bg_title:     'assets/bg_title.png',
+  bg_office:    'assets/bg_office.png',
+  bg_factory:   'assets/bg_factory.png',
+  bg_lab:       'assets/bg_lab.png',
+};
+
+// ════════════════════════════════════════════════
+//  SVG 海岛结构示意图
+// ════════════════════════════════════════════════
+const SEA_ISLAND_SVG = {
+  good: `<svg viewBox="0 0 320 180" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;max-height:100%">
+    <rect width="320" height="180" rx="4" fill="#e8f4f8" stroke="#5c3d1e" stroke-width="3"/>
+    <text x="160" y="20" text-anchor="middle" fill="#5c3d1e" font-size="13" font-weight="bold" font-family="sans-serif">良好海岛结构（0.8-2μm）</text>
+    <g fill="#4a7c3f" stroke="#2d4a1e" stroke-width="0.5">
+      <circle cx="60" cy="60" r="4"/><circle cx="100" cy="45" r="3"/><circle cx="140" cy="70" r="4.5"/>
+      <circle cx="175" cy="50" r="3.5"/><circle cx="210" cy="65" r="4"/><circle cx="250" cy="48" r="3"/>
+      <circle cx="285" cy="70" r="4"/><circle cx="75" cy="95" r="3.5"/><circle cx="115" cy="110" r="4"/>
+      <circle cx="155" cy="90" r="3"/><circle cx="195" cy="105" r="4.5"/><circle cx="230" cy="88" r="3.5"/>
+      <circle cx="265" cy="100" r="4"/><circle cx="55" cy="130" r="3"/><circle cx="90" cy="150" r="4"/>
+      <circle cx="135" cy="135" r="3.5"/><circle cx="170" cy="155" r="4"/><circle cx="210" cy="140" r="3"/>
+      <circle cx="250" cy="158" r="4.5"/><circle cx="295" cy="135" r="3.5"/>
+    </g>
+    <text x="160" y="174" text-anchor="middle" fill="#4a6fa5" font-size="10" font-family="sans-serif">PP基体（海）+ POE分散相（岛）均匀分布</text>
+  </svg>`,
+
+  ok: `<svg viewBox="0 0 320 180" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;max-height:100%">
+    <rect width="320" height="180" rx="4" fill="#e8f4f8" stroke="#5c3d1e" stroke-width="3"/>
+    <text x="160" y="20" text-anchor="middle" fill="#5c3d1e" font-size="13" font-weight="bold" font-family="sans-serif">合格海岛结构（3-5μm）</text>
+    <g fill="#c8a86a" stroke="#5c3d1e" stroke-width="0.8">
+      <circle cx="60" cy="60" r="8"/><circle cx="110" cy="48" r="7"/><circle cx="160" cy="68" r="9"/>
+      <circle cx="210" cy="52" r="7.5"/><circle cx="260" cy="65" r="8"/><circle cx="290" cy="50" r="6"/>
+      <circle cx="75" cy="105" r="8.5"/><circle cx="130" cy="118" r="7"/><circle cx="185" cy="100" r="9"/>
+      <ellipse cx="240" cy="110" rx="12" ry="8"/><circle cx="55" cy="148" r="7"/><circle cx="105" cy="160" r="8"/>
+      <circle cx="165" cy="145" r="7.5"/><ellipse cx="225" cy="155" rx="13" ry="9"/><circle cx="285" cy="148" r="7"/>
+    </g>
+    <text x="160" y="174" text-anchor="middle" fill="#8b2f2f" font-size="10" font-family="sans-serif">分散相粒径偏大，局部轻微聚并</text>
+  </svg>`,
+
+  poor: `<svg viewBox="0 0 320 180" xmlns="http://www.w3.org/2000/svg" style="max-width:100%;max-height:100%">
+    <rect width="320" height="180" rx="4" fill="#e8f4f8" stroke="#8b2f2f" stroke-width="3"/>
+    <text x="160" y="20" text-anchor="middle" fill="#8b2f2f" font-size="13" font-weight="bold" font-family="sans-serif">不良海岛结构（10-20μm）</text>
+    <g fill="#e06060" stroke="#8b2f2f" stroke-width="1">
+      <circle cx="65" cy="65" r="16"/><ellipse cx="140" cy="55" rx="20" ry="15"/>
+      <circle cx="215" cy="68" r="17"/><ellipse cx="275" cy="60" rx="22" ry="16"/>
+      <circle cx="80" cy="120" r="15"/><ellipse cx="165" cy="125" rx="25" ry="18"/>
+      <circle cx="250" cy="130" r="19"/><path d="M 30 148 Q 60 138, 75 160 Q 45 172, 30 148" fill="#e06060"/>
+    </g>
+    <text x="160" y="174" text-anchor="middle" fill="#8b2f2f" font-size="10" font-family="sans-serif">严重聚并，粗大颗粒成为断裂缺陷源</text>
+  </svg>`
+};
+
+// ════════════════════════════════════════════════
+//  游戏状态
+// ════════════════════════════════════════════════
+const G = {
+  node: null,
+  typing: false,
+  typeTimer: null,
+  pendingNext: null,
+  pendingCallback: null,
+  awaitClick: false,
+  path: {
+    equipment: null,
+    modifier: null,
+    compatibilizer: null,
+    params: null,
+    score: 0,
+    detours: [],
+    steps: 0
+  },
+  hudProgress: 0,
+  compatLevel: null,
+  testResult: null,
+  morphDiagram: null,
+  _kcCloseCallback: null
+};
+
+// ════════════════════════════════════════════════
+//  节点剧本
+// ════════════════════════════════════════════════
+const NODES = {
+  // ── 开场 ──
+  start: {
+    speaker:'王工', bg:'office', char:'wang_normal',
+    text:'欢迎来到研发中心！我是<b>王工</b>，今天咱们要完成一个真实工业项目——为汽车保险杠开发一款高性能PP共混材料。准备好了吗？',
+    next:'brief1'
+  },
+  brief1: {
+    speaker:'王工', bg:'office', char:'wang_normal',
+    text:'客户要求：<b>缺口冲击强度 ≥ 50 kJ/m²</b>（23℃），弯曲模量 ≥ 1.0 GPa，热变形温度 ≥ 80℃。但纯均聚PP的冲击强度仅约 <b>5 kJ/m²</b>，差了10倍！',
+    next:'brief2'
+  },
+  brief2: {
+    speaker:'王工', bg:'office', char:'wang_normal',
+    text:'PP是结晶性聚合物，Tg ≈ -10℃，低温下极易脆断。我们必须通过<b>弹性体共混增韧</b>来改性。接下来你将做出三个关键决策，每个选择都会影响最终材料性能！',
+    next:'knowledge_intro'
+  },
+
+  // ── 知识卡片：共混原理 ──
+  knowledge_intro: {
+    speaker:'系统', bg:'lab', char:'wang_normal',
+    text:'先来回顾共混改性的核心原理，这将帮助你做出正确决策。',
+    tag:'system',
+    knowledge: {
+      icon:'📚', title:'聚合物共混改性（增韧）核心原理',
+      body:`<p>聚合物共混：将<b>两种及以上</b>聚合物通过物理机械方法混合，综合各组分优点。</p>
+<p><b>PP增韧核心机理：</b>在脆性PP基体中引入橡胶相（弹性体），橡胶粒子作为应力集中点，引发银纹/剪切屈服并终止银纹扩展，从而吸收冲击能量。</p>
+<p><b>工业要求：</b>橡胶相需以 <b>0.5-5μm</b> 粒径均匀分散在PP基体中，界面结合良好，才能"增韧不显著降刚"。</p>`
+    },
+    next:'equip_choice'
+  },
+
+  // ── 第一关：设备选择 ──
+  equip_choice: {
+    speaker:'王工', bg:'factory', char:'wang_normal',
+    text:'<b>第一关：选择共混加工设备</b>🏭\n\n设备的剪切能力直接决定橡胶相分散粒径。工业常用设备有以下三种，你怎么看？',
+    choices:[
+      {text:'同向双螺杆挤出机', hint:'L/D=40~48，分散混合最优，工业主流 ⭐⭐⭐', next:'equip_twin', score:3},
+      {text:'密炼机＋单螺杆造粒', hint:'适合实验室小试，间歇式操作 ⭐⭐', next:'equip_int', score:2},
+      {text:'单螺杆挤出机', hint:'混合能力弱，仅适合简单共混 ⭐', next:'equip_single', score:1}
+    ]
+  },
+
+  equip_twin: {
+    speaker:'王工', bg:'factory', char:'wang_happy',
+    text:'<span class="good">✅ 双螺杆挤出机——最优选择！</span>\n\n啮合区强剪切+多次分流/重组，可将橡胶相分散至 <b>1-3μm</b>。工业PP共混几乎均采用双螺杆（转速200-600rpm，产量1-10t/h），连续化效率高！',
+    sceneImg:'twin_screw',
+    onEnter(){ G.path.equipment='twin'; updateHUD(1,'done'); },
+    next:'equip_summary'
+  },
+  equip_int: {
+    speaker:'王工', bg:'factory', char:'wang_worry',
+    text:'<span class="warn">⚠️ 密炼机——实验室常用，工业受限。</span>\n\n两转子剪切混合（填充系数0.6-0.8），但<b>间歇式操作</b>，每批5-50kg，需后续开炼/造粒，效率低。工业上仅用于配方研发小试。',
+    sceneImg:'int_mixer',
+    onEnter(){ G.path.equipment='internal'; updateHUD(1,'done'); },
+    next:'equip_summary'
+  },
+  equip_single: {
+    speaker:'王工', bg:'factory', char:'wang_sad',
+    text:'<span class="bad">❌ 单螺杆——混合能力不足！</span>\n\n单螺杆仅靠拖曳流动混合，剪切弱，易导致橡胶相聚并（粒径>10μm）。需额外添加相容剂+高转速补救，但效果仍差于双螺杆。',
+    sceneImg:'single_screw',
+    onEnter(){ G.path.equipment='single'; G.path.detours.push('设备分散能力不足'); updateHUD(1,'fail'); },
+    next:'equip_summary'
+  },
+  equip_summary: {
+    speaker:'系统', bg:'factory', char:'wang_normal',
+    tag:'system',
+    text:'关卡小结：设备影响链——<b>剪切强度 → 分散相粒径 → 形态结构 → 最终性能</b>。双螺杆分散能力是单螺杆的3-5倍，这是工业PP共混的核心装备！',
+    next:'mod_choice'
+  },
+
+  // ── 第二关：增韧剂 ──
+  mod_choice: {
+    speaker:'王工', bg:'lab', char:'wang_normal',
+    text:'<b>第二关：选择增韧弹性体</b>🧪\n\n弹性体需满足：与PP相容、低Tg（<-40℃）、耐候性好、加工温度匹配（180-230℃）。你选哪种？',
+    choices:[
+      {text:'POE（聚烯烃弹性体，Engage 8150）', hint:'Tg=-60℃，与PP相容性最优，无需相容剂 ⭐⭐⭐', next:'mod_poe', score:3},
+      {text:'EPDM（三元乙丙橡胶，EP33）', hint:'Tg=-55℃，传统增韧剂，成本低10-15% ⭐⭐', next:'mod_epdm', score:2},
+      {text:'SBS（苯乙烯-丁二烯嵌段共聚物）', hint:'含不饱和双键，耐候性差，相容性弱 ⭐', next:'mod_sbs', score:1}
+    ]
+  },
+
+  mod_poe: {
+    speaker:'王工', bg:'lab', char:'wang_happy',
+    text:'<span class="good">✅ POE——汽车级增韧首选！</span>\n\nPOE是乙烯-辛烯无规共聚物（辛烯20-30%），与PP同为聚烯烃，溶解度参数高度匹配，<b>无需相容剂</b>即可分散至1-3μm。耐候性极佳（无双键），低温韧性出色！',
+    onEnter(){ G.path.modifier='poe'; updateHUD(2,'done'); },
+    next:'compat_check'
+  },
+  mod_epdm: {
+    speaker:'王工', bg:'lab', char:'wang_worry',
+    text:'<span class="warn">⚠️ EPDM——传统方案，需相容化。</span>\n\nEPDM成本低10-15%，但与PP溶解度参数差异较大，界面张力高（>5 mN/m），<b>需添加相容剂</b>改善界面。门尼粘度需控制（ML1+4 125℃=40-60）。',
+    onEnter(){ G.path.modifier='epdm'; updateHUD(2,'done'); },
+    next:'compat_check'
+  },
+  mod_sbs: {
+    speaker:'王工', bg:'lab', char:'wang_sad',
+    text:'<span class="bad">❌ SBS——风险较大！</span>\n\nSBS聚苯乙烯硬段与PP相容性差，聚丁二烯软段含<b>不饱和双键</b>，加工>200℃时易热氧老化。热变形温度会显著下降（<70℃），不适合汽车保险杠。',
+    onEnter(){ G.path.modifier='sbs'; G.path.detours.push('SBS耐候性差'); updateHUD(2,'fail'); },
+    next:'compat_check'
+  },
+
+  // ── 相容性评估（逻辑分支） ──
+  compat_check: {
+    speaker:'系统', bg:'lab', char:'wang_normal', tag:'system',
+    text:'正在评估体系相容性……',
+    resolve(){
+      const eq=G.path.equipment, mod=G.path.modifier;
+      if(eq==='twin' && mod==='poe') return 'compat_excellent';
+      if(mod==='sbs' || eq==='single') return 'compat_poor';
+      return 'compat_moderate';
+    }
+  },
+
+  compat_excellent: {
+    speaker:'王工', bg:'lab', char:'wang_happy',
+    text:'<span class="good">🎉 完美组合！双螺杆 + POE。</span>\n\nPOE与PP界面张力 <3 mN/m，双螺杆强剪切直接分散至 <b>1-2μm</b>，无需添加相容剂。这是汽车级PP保险杠料的工业标准方案（PP/POE=80/20）！',
+    next:'param_choice'
+  },
+  compat_moderate: {
+    speaker:'王工', bg:'lab', char:'wang_worry',
+    text:'此组合界面张力约 5-8 mN/m，橡胶相易聚并（粒径>5μm），建议添加相容剂！',
+    choices:[
+      {text:'添加 PP-g-MAH 相容剂（1-2%）', hint:'推荐：界面张力降低50%+，粒径控至3-5μm', next:'compat_added', score:2},
+      {text:'不添加，依靠高剪切弥补', hint:'风险：界面结合弱，冲击强度大幅波动', next:'compat_skip', score:0}
+    ]
+  },
+  compat_poor: {
+    speaker:'王工', bg:'lab', char:'wang_sad',
+    text:'<span class="bad">⚠️ 高风险！</span> 界面张力>10 mN/m，橡胶相极易粗大聚并（>10μm）。必须采取相容化措施！',
+    onEnter(){ G.path.detours.push('相容性差'); },
+    choices:[
+      {text:'添加 PP-g-MAH（2-3%）', hint:'最优补救：界面张力降至<5 mN/m', next:'compat_added', score:2},
+      {text:'添加 SEBS（5%）', hint:'次优：作为界面调节剂', next:'compat_sebs', score:1},
+      {text:'强行继续，不加相容剂', hint:'极高风险：冲击强度预计<30 kJ/m²', next:'compat_risky', score:0}
+    ]
+  },
+  compat_added: {
+    speaker:'王工', bg:'lab', char:'wang_happy',
+    text:'<span class="good">✅ PP-g-MAH相容剂——正确选择！</span>\n\nMAH基团与弹性体活性基团反应，PP主链与基体相容，界面张力降低 <b>50%以上</b>，分散相粒径可控制在3-5μm。工业添加量1-3%。',
+    onEnter(){ G.path.compatibilizer='pp-g-mah'; },
+    next:'param_choice'
+  },
+  compat_sebs: {
+    speaker:'王工', bg:'lab', char:'wang_worry',
+    text:'SEBS是SBS的加氢产物（饱和度>98%），与PP相容性优于SBS，可作为界面调节剂。但成本高（POE的1.5倍），增韧效率仅PP-g-MAH的60%。',
+    onEnter(){ G.path.compatibilizer='sebs'; },
+    next:'param_choice'
+  },
+  compat_skip: {
+    speaker:'王工', bg:'lab', char:'wang_worry',
+    text:'<span class="warn">⚠️ 承担界面风险！</span>\n\n无相容剂时，橡胶相界面结合力弱，冲击强度比加相容剂低20-30%。后续需严格控制工艺参数！',
+    onEnter(){ G.path.compatibilizer='none'; G.path.detours.push('未加相容剂'); },
+    next:'param_choice'
+  },
+  compat_risky: {
+    speaker:'王工', bg:'lab', char:'wang_sad',
+    text:'<span class="bad">❌ 极高风险决策！</span>\n\n设备+增韧剂+无相容剂，三重不利因素叠加，橡胶相几乎必然粗大聚并。冲击强度预计<30 kJ/m²，远低于50的目标值！',
+    onEnter(){ G.path.compatibilizer='none'; G.path.detours.push('无相容剂+相容性极差'); },
+    next:'param_choice'
+  },
+
+  // ── 第三关：工艺参数 ──
+  param_choice: {
+    speaker:'王工', bg:'factory', char:'wang_normal',
+    text:'<b>第三关：设定共混工艺参数</b>⚙️\n\n遵循"软包硬"法则：分散相粘度比（λ）= 0.3~3 时分散最优。你的参数选择是？',
+    knowledge: {
+      icon:'⚙️', title:'PP共混工艺参数核心原则',
+      body:`<p><b>加工温度：</b>180-230℃（PP熔点165-170℃），过高>240℃导致降解。</p>
+<p><b>剪切速率：</b>转速200-600rpm（剪切速率1000-5000 s⁻¹），高剪切利于液滴破碎。</p>
+<p><b>配比：</b>弹性体含量15-25%，过低增韧不足，过高刚性/耐热性下降。</p>
+<p><b>"软包硬"法则：</b>λ=η分散/η连续 = 0.3~3 时分散最优，λ≈1时粒径最细。</p>`
+    },
+    choices:[
+      {text:'220℃ · 300rpm · PP:弹=80:20', hint:'最优：λ≈1，分散粒径1-2μm ⭐⭐⭐', next:'param_opt', score:3},
+      {text:'200℃ · 200rpm · PP:弹=85:15', hint:'稳妥：λ≈1.5，分散粒径3-4μm ⭐⭐', next:'param_ok', score:2},
+      {text:'180℃ · 100rpm · PP:弹=90:10', hint:'保守：λ≈3，分散粒径>5μm ⭐', next:'param_poor', score:1}
+    ]
+  },
+
+  param_opt: {
+    speaker:'王工', bg:'factory', char:'wang_happy',
+    text:'<span class="good">✅ 参数最优！</span>\n\n220℃下PP粘度≈1000 Pa·s，POE粘度≈1200 Pa·s（λ≈1.2），300rpm剪切可将POE破碎至<b>1-2μm</b>；20%POE在保证冲击强度（>50 kJ/m²）的同时，弯曲模量仍>1.1 GPa！',
+    onEnter(){ G.path.params='optimal'; updateHUD(3,'done'); },
+    next:'processing'
+  },
+  param_ok: {
+    speaker:'王工', bg:'factory', char:'wang_worry',
+    text:'<span class="warn">⚠️ 参数合理，非最优。</span>\n\n200℃下λ≈1.5，200rpm可分散至<b>3-4μm</b>，15%POE冲击强度约45-50 kJ/m²（接近目标），弯曲模量>1.2 GPa（刚性更优）。工业上常以此平衡韧性/刚性。',
+    onEnter(){ G.path.params='ok'; updateHUD(3,'done'); },
+    next:'processing'
+  },
+  param_poor: {
+    speaker:'王工', bg:'factory', char:'wang_sad',
+    text:'<span class="bad">❌ 参数偏保守！</span>\n\n180℃下PP粘度>2000 Pa·s（λ≈3），100rpm剪切力不足，POE粒径>5μm；10%POE冲击强度仅30-35 kJ/m²，远低于目标！虽刚性高，但无法满足保险杠抗冲要求。',
+    onEnter(){ G.path.params='poor'; G.path.detours.push('参数保守，剪切/含量不足'); updateHUD(3,'fail'); },
+    next:'processing'
+  },
+
+  // ── 加工过程 ──
+  processing: {
+    speaker:'系统', bg:'factory', char:'wang_normal', tag:'system',
+    text:'物料投入双螺杆……温度梯度（一区180→二区200→三区220→机头210℃），螺杆转速300rpm，喂料速率200kg/h。熔融共混中，来回顾形态结构的关键影响因素！',
+    knowledge: {
+      icon:'🔬', title:'PP/弹性体共混物的相形态控制',
+      body:`<p><b>相容性：</b>界面张力越小 → 分散相粒径越细（完全不相容则宏观相分离）。</p>
+<p><b>配比：</b>弹性体<30%时为"海岛结构"（PP连续相/弹性体分散相）；30-50%时形成"海海结构"（双连续相），刚性骤降。</p>
+<p><b>粘度比λ：</b>0.3~3时分散最优；λ>5或<0.1时液滴难破碎/易聚并。</p>
+<p><b>工艺：</b>剪切速率↑ → 粒径↓；停留时间↑ → 混合均匀（但过长易降解）。</p>`
+    },
+    next:'morph_result'
+  },
+
+  // ── 形态结果（动态分支） ──
+  morph_result: {
+    speaker:'王工', bg:'lab', char:'wang_normal',
+    text:'样品制备完成！通过扫描电镜（SEM）观察冲击断面形态……',
+    resolve(){
+      const sc = G.path.score;
+      G.morphDiagram = sc>=7 ? 'good' : (sc>=4 ? 'ok' : 'poor');
+      if(sc>=7) return 'morph_good';
+      if(sc>=4) return 'morph_ok';
+      return 'morph_poor';
+    }
+  },
+
+  morph_good: {
+    speaker:'王工', bg:'lab', char:'wang_happy',
+    text:'<span class="good">🎉 完美的海岛结构！</span>\n\nSEM显示POE以 <b>0.8-2μm</b> 细小液滴均匀分散在PP基体中，无聚并，界面紧密。这种形态下橡胶粒子高效引发剪切屈服，吸收冲击能量——汽车级PP保险杠的理想形态！',
+    seaIsland:'good',
+    next:'knowledge_sea'
+  },
+  morph_ok: {
+    speaker:'王工', bg:'lab', char:'wang_worry',
+    text:'<span class="warn">⚠️ 合格海岛结构。</span>\n\nPOE粒径 <b>3-4μm</b>，局部轻微聚并，界面结合良好。增韧效率略低（冲击强度接近目标），但刚性损失小，适合对刚性要求更高的保险杠。',
+    seaIsland:'ok',
+    next:'knowledge_sea'
+  },
+  morph_poor: {
+    speaker:'王工', bg:'lab', char:'wang_sad',
+    text:'<span class="bad">❌ 不良海岛结构！</span>\n\nPOE粒径 <b>10-20μm</b>，严重聚并，界面脱粘。粗大颗粒不仅增韧效率低，还成为断裂起始点。需重新优化配方/工艺！',
+    seaIsland:'poor',
+    next:'knowledge_sea'
+  },
+
+  knowledge_sea: {
+    speaker:'系统', bg:'lab', char:'wang_normal', tag:'system',
+    text:'深入理解共混物核心形态结构类型，这是增韧改性的设计基础。',
+    knowledge: {
+      icon:'🧬', title:'海岛结构 vs 海海结构',
+      body:`<p><b>海岛结构（Sea-Island）：</b>弹性体含量<30%，PP为连续相（海），弹性体为分散相（岛），粒径0.1-10μm，增韧的最优形态（1-5μm）。性能特点：增韧同时保留刚性。</p>
+<p><b>海海结构（Co-continuous）：</b>弹性体30-50%时形成，两组分均为连续相互相贯穿。特点：冲击强度极高（>100 kJ/m²），但弯曲模量<0.5 GPa（刚性骤降）。仅适合非结构件。</p>
+<p style="color:#d4a818;">汽车保险杠黄金形态：<b>海岛结构</b>，弹性体粒径<b>1-3μm</b>，含量15-25%。</p>`
+    },
+    next:'test_results'
+  },
+
+  // ── 测试结果 ──
+  test_results: {
+    speaker:'测试报告', bg:'lab', char:'wang_normal', tag:'report',
+    text:'按GB/T标准进行测试：冲击（GB/T 1843）、弯曲（GB/T 9341）、热变形（GB/T 1633）……',
+    resolve(){
+      const sc=G.path.score;
+      G.testResult = sc>=8 ? 'excellent' : (sc>=5 ? 'pass' : 'fail');
+      return G.testResult==='excellent' ? 'test_excel' : (G.testResult==='pass' ? 'test_pass' : 'test_fail');
+    }
+  },
+
+  test_excel: {
+    speaker:'测试报告', bg:'lab', char:'wang_happy', tag:'report',
+    text:'<span class="good">✅ 性能全面达标（汽车级保险杠料）！</span>\n\n缺口冲击强度：<b class="good">58.3 kJ/m²</b>（23℃）| 42.5 kJ/m²（-20℃）\n弯曲模量：1.18 GPa | 热变形温度：85℃\n分散相粒径：0.8μm | 收缩率：1.2%\n\n恭喜！材料可直接批量生产！',
+    onEnter(){ G.path.steps++; },
+    next:'final_knowledge'
+  },
+  test_pass: {
+    speaker:'测试报告', bg:'lab', char:'wang_worry', tag:'report',
+    text:'<span class="warn">⚠️ 接近达标，需小幅优化。</span>\n\n缺口冲击强度：<b class="warn">46.2 kJ/m²</b>（23℃）\n弯曲模量：1.15 GPa | 热变形温度：82℃\n分散相粒径：3.5μm\n\n建议：POE增至18% 或 转速提至250rpm。',
+    onEnter(){ G.path.steps++; },
+    next:'final_knowledge'
+  },
+  test_fail: {
+    speaker:'测试报告', bg:'lab', char:'wang_sad', tag:'report',
+    text:'<span class="bad">❌ 性能未达标！需重新配方。</span>\n\n缺口冲击强度：<b class="bad">28.7 kJ/m²</b>（23℃）——距目标差距超过40%！\n弯曲模量：1.25 GPa\n\n主要问题：橡胶相粒径过大、界面结合差、弹性体含量不足。',
+    onEnter(){ G.path.steps++; },
+    next:'final_knowledge'
+  },
+
+  // ── 最终知识点 ──
+  final_knowledge: {
+    speaker:'王工', bg:'office', char:'wang_normal',
+    text:'无论结果如何，让我们梳理PP增韧改性的完整知识体系。这是本节课最重要的内容！',
+    knowledge: {
+      icon:'🏆', title:'PP增韧改性知识要点总结',
+      body:`<p><b>1. 增韧机理：</b>橡胶粒子作为应力集中点 → 引发银纹/剪切屈服 → 吸收冲击能量 → 韧性↑</p>
+<p><b>2. 最优弹性体选择：</b>POE > EPDM > SBS（汽车级：首选POE）</p>
+<p><b>3. 最优加工设备：</b>双螺杆挤出机（分散能力3-5倍于单螺杆）</p>
+<p><b>4. 相容性控制：</b>POE无需相容剂；EPDM需PP-g-MAH（1-2%）；SBS相容性差，慎用</p>
+<p><b>5. 黄金形态：</b>海岛结构，POE粒径1-3μm，含量15-20%，PP/POE=80/20~85/15</p>
+<p><b>6. 工艺参数：</b>220℃ · 300rpm · λ≈1 → 最优分散</p>`
+    },
+    next:'__END__'
+  }
+};
+
+// ════════════════════════════════════════════════
+//  HUD 进度更新
+// ════════════════════════════════════════════════
+function updateHUD(step, status){
+  const hud = document.getElementById('hud');
+  const dots = hud.querySelectorAll('.hud-dot');
+  if(dots[step-1]){
+    dots[step-1].classList.remove('done','fail');
+    dots[step-1].classList.add(status);
+  }
+}
+
+// ════════════════════════════════════════════════
+//  打字机效果
+// ════════════════════════════════════════════════
+function typeText(el, html, onDone){
+  // 解析成纯文本用于打字，然后最终替换为完整HTML
+  clearTimeout(G.typeTimer);
+  const temp = document.createElement('div');
+  temp.innerHTML = html;
+  const plainText = temp.textContent;
+
+  el.innerHTML = '';
+  G.typing = true;
+  let i = 0;
+  const speed = 28; // ms per char
+
+  function tick(){
+    if(i < plainText.length){
+      // 显示纯文本进度，最后才替换HTML
+      el.textContent = plainText.substring(0, i+1);
+      i++;
+      G.typeTimer = setTimeout(tick, speed);
+    } else {
+      el.innerHTML = html; // 替换为完整HTML（含标签）
+      G.typing = false;
+      if(onDone) onDone();
+    }
+  }
+  tick();
+}
+
+function skipType(el, html){
+  clearTimeout(G.typeTimer);
+  G.typing = false;
+  el.innerHTML = html;
+}
+
+// ════════════════════════════════════════════════
+//  场景切换
+// ════════════════════════════════════════════════
+function setBG(key){
+  const bg = document.getElementById('scene-bg');
+  const src = IMGS['bg_'+key];
+  if(src) bg.style.backgroundImage = `url('${src}')`;
+}
+
+function setChar(key, emotion){
+  const sprite = document.getElementById('char-sprite');
+  const src = IMGS['wang_'+(emotion||key)];
+  if(!src){ sprite.classList.add('hidden'); return; }
+  sprite.src = src;
+  sprite.classList.remove('hidden');
+}
+
+function setSceneImage(key){
+  const area = document.getElementById('scene-image-area');
+  const img = document.getElementById('scene-image');
+  const svg = document.getElementById('scene-svg');
+  const src = IMGS[key];
+  if(src){
+    img.src = src;
+    img.style.display = 'block';
+    svg.innerHTML = '';
+    area.classList.add('show');
+  } else {
+    area.classList.remove('show');
+  }
+}
+
+function setSeaIsland(type){
+  const area = document.getElementById('scene-image-area');
+  const img = document.getElementById('scene-image');
+  const svg = document.getElementById('scene-svg');
+  img.style.display = 'none';
+  svg.innerHTML = SEA_ISLAND_SVG[type] || '';
+  area.classList.add('show');
+}
+
+// ════════════════════════════════════════════════
+//  知识卡片
+// ════════════════════════════════════════════════
+function showKnowledge(kc, onClose){
+  document.getElementById('kc-icon').textContent = kc.icon;
+  document.getElementById('kc-title').textContent = kc.title;
+  document.getElementById('kc-body').innerHTML = kc.body;
+  document.getElementById('knowledge-panel').classList.add('show');
+  G._kcCloseCallback = onClose;
+}
+function closeKnowledge(){
+  document.getElementById('knowledge-panel').classList.remove('show');
+  if(G._kcCloseCallback){
+    const cb = G._kcCloseCallback;
+    G._kcCloseCallback = null;
+    cb();
+  }
+}
+
+// ════════════════════════════════════════════════
+//  显示选项
+// ════════════════════════════════════════════════
+function showChoices(choices){
+  const area = document.getElementById('choices-area');
+  area.innerHTML = '';
+  // 不隐藏对话框，选项浮在对话框上方，介绍文字仍可见
+
+  choices.forEach((c, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'choice-btn';
+    btn.innerHTML = `${c.text}${c.hint ? `<span class="choice-hint">${c.hint}</span>` : ''}`;
+    btn.onclick = () => {
+      if(c.score && c.score > 0) G.path.score += c.score;
+      choiceSelected(c);
+    };
+    area.appendChild(btn);
+  });
+  area.classList.add('show');
+  document.getElementById('next-hint').style.opacity = '0';
+}
+function hideChoices(){
+  const area = document.getElementById('choices-area');
+  area.classList.remove('show');
+  area.innerHTML = '';
+}
+function choiceSelected(choice){
+  hideChoices();
+  goTo(choice.next);
+}
+
+// ════════════════════════════════════════════════
+//  核心节点渲染
+// ════════════════════════════════════════════════
+function goTo(nodeId){
+  if(nodeId === '__END__'){
+    showResult();
+    return;
+  }
+  const node = NODES[nodeId];
+  if(!node){ console.warn('Missing node:', nodeId); return; }
+
+  G.node = nodeId;
+
+  // 执行 onEnter 回调
+  if(node.onEnter) node.onEnter();
+
+  // 背景切换
+  if(node.bg) setBG(node.bg);
+
+  // 角色立绘
+  if(node.char){
+    const spriteEl = document.getElementById('char-sprite');
+    const emotion = node.char.replace('wang_','');
+    setChar('normal', emotion);
+    // 情绪动画
+    spriteEl.className = '';
+    if(emotion==='happy') spriteEl.classList.add('happy');
+  }
+
+  // 场景图片 / SEM图
+  if(node.sceneImg){
+    setSceneImage(node.sceneImg);
+  } else if(node.seaIsland){
+    setSeaIsland(node.seaIsland);
+  } else {
+    document.getElementById('scene-image-area').classList.remove('show');
+  }
+
+  // 说话人标签
+  const tag = document.getElementById('speaker-tag');
+  tag.textContent = node.speaker || '系统';
+  tag.className = 'speaker-name';
+  if(node.tag==='system') tag.classList.add('system-tag');
+  if(node.tag==='report') tag.classList.add('report-tag');
+
+  // 更新积分显示
+  document.getElementById('score-display').textContent = `⭐ ${G.path.score} 分`;
+
+  // 对话文字（打字效果）
+  const textEl = document.getElementById('dialogue-text');
+  const nextHint = document.getElementById('next-hint');
+  nextHint.style.opacity = '0';
+
+  const rawText = (node.text||'').replace(/\n/g,'<br>');
+  typeText(textEl, rawText, () => {
+    nextHint.style.opacity = '1';
+    afterTypeDone(node);
+  });
+}
+
+function afterTypeDone(node){
+  const nextHint = document.getElementById('next-hint');
+  nextHint.style.opacity = '1';
+
+  if(node.knowledge){
+    // 有知识卡：先点击继续，再弹知识卡，再处理后续
+    nextHint.style.opacity = '1'; // 提示用户点击
+    G.awaitClick = true;
+    G.pendingCallback = () => {
+      nextHint.style.opacity = '0';
+      showKnowledge(node.knowledge, () => {
+        // 知识卡关闭后，显示选项或继续
+        if(node.choices){
+          showChoices(node.choices);
+        } else if(node.resolve){
+          const next = node.resolve();
+          goTo(next);
+        } else if(node.next){
+          goTo(node.next);
+        }
+      });
+    };
+  } else if(node.choices){
+    // 有选项但无知识：打完后等一下显示选项
+    G.awaitClick = false;
+    G.pendingNext = null;
+    setTimeout(() => showChoices(node.choices), 200);
+  } else if(node.resolve){
+    // 逻辑分支节点
+    G.awaitClick = false;
+    setTimeout(() => {
+      const next = node.resolve();
+      goTo(next);
+    }, 800);
+  } else {
+    // 普通点击继续
+    G.awaitClick = true;
+    G.pendingNext = node.next;
+    G.pendingCallback = null;
+  }
+}
+
+function proceedAfterNode(node){
+  if(node.choices){
+    showChoices(node.choices);
+  } else if(node.next){
+    goTo(node.next);
+  }
+}
+
+// 处理对话框点击
+function handleDialogueClick(){
+  if(G.typing){
+    // 快进打字
+    const node = NODES[G.node];
+    if(node){
+      const textEl = document.getElementById('dialogue-text');
+      skipType(textEl, (node.text||'').replace(/\n/g,'<br>'));
+      const nextHint = document.getElementById('next-hint');
+      nextHint.style.opacity = '1';
+      G.typing = false;
+      // 重新触发打字完成逻辑
+      afterTypeDone(node);
+    }
+    return;
+  }
+  if(G.awaitClick){
+    G.awaitClick = false;
+    if(G.pendingCallback){
+      const cb = G.pendingCallback;
+      G.pendingCallback = null;
+      cb();
+    } else if(G.pendingNext){
+      const next = G.pendingNext;
+      G.pendingNext = null;
+      goTo(next);
+    }
+  }
+}
+
+// ════════════════════════════════════════════════
+//  结果画面
+// ════════════════════════════════════════════════
+function showResult(){
+  const score = G.path.score;
+  const maxScore = 14;
+  const pct = Math.min(100, Math.round(score/maxScore*100));
+
+  let grade, title, detail;
+  if(score >= 10){
+    grade = '🏆'; title = '优秀工程师！材料完全达标';
+    detail = `<b>缺口冲击强度：<span style="color:#7ddf90">58.3 kJ/m²</span></b>（目标≥50）
+弯曲模量：1.18 GPa ✅ | 热变形温度：85℃ ✅
+分散相粒径：0.8μm（海岛结构最优）
+
+<b>全程零失误，可直接量产！</b>`;
+  } else if(score >= 6){
+    grade = '🥈'; title = '合格工程师，需小幅优化';
+    detail = `<b>缺口冲击强度：<span style="color:#e8d5a0">46.2 kJ/m²</span></b>（目标≥50，差距8%）
+弯曲模量：1.15 GPa ✅ | 热变形温度：82℃ ✅
+
+<b>优化建议：</b>提高弹性体含量至18% 或 提高转速至250rpm`;
+  } else {
+    grade = '🥉'; title = '需要继续学习，距目标差距较大';
+    detail = `<b>缺口冲击强度：<span style="color:#e06060">28.7 kJ/m²</span></b>（目标≥50，差距超40%！）
+
+<b>主要问题：</b>
+${G.path.detours.map(d=>'• '+d).join('\n')}
+
+<b>建议：</b>重新学习增韧改性原理，优化设备+弹性体+参数的协同选择。`;
+  }
+
+  const paths = [
+    `设备：${{twin:'双螺杆挤出机✅', internal:'密炼机⚠️', single:'单螺杆❌'}[G.path.equipment]||'未选'}`,
+    `增韧剂：${{poe:'POE✅', epdm:'EPDM⚠️', sbs:'SBS❌'}[G.path.modifier]||'未选'}`,
+    `相容剂：${G.path.compatibilizer==='pp-g-mah'?'PP-g-MAH✅':G.path.compatibilizer==='sebs'?'SEBS⚠️':'未加❌'}`,
+    `参数：${{optimal:'220℃·300rpm✅', ok:'200℃·200rpm⚠️', poor:'180℃·100rpm❌'}[G.path.params]||'未选'}`,
+    `总得分：${score}/${maxScore}分`
+  ];
+
+  document.getElementById('result-grade').textContent = grade;
+  document.getElementById('result-title').textContent = title;
+  document.getElementById('result-detail').innerHTML = detail.replace(/\n/g,'<br>');
+  document.getElementById('result-path').innerHTML = paths.join('<br>');
+
+  document.getElementById('result-screen').classList.add('show');
+  setTimeout(() => {
+    document.getElementById('result-fill').style.width = pct+'%';
+  }, 100);
+}
+
+// ════════════════════════════════════════════════
+//  游戏控制
+// ════════════════════════════════════════════════
+function startGame(){
+  document.getElementById('title-screen').classList.add('hidden');
+  document.getElementById('dialogue-area').style.display = '';
+  document.getElementById('hud').classList.add('show');
+  document.getElementById('score-display').classList.add('show');
+
+  // 初始化HUD（3步）
+  const hud = document.getElementById('hud');
+  hud.innerHTML = '';
+  ['设备','增韧剂','参数'].forEach((label, i) => {
+    const dot = document.createElement('div');
+    dot.className = 'hud-dot';
+    dot.title = `第${i+1}步：${label}`;
+    hud.appendChild(dot);
+  });
+
+  goTo('start');
+}
+
+function restartGame(){
+  // 重置状态
+  G.node = null;
+  G.typing = false;
+  G.pendingNext = null;
+  G.pendingCallback = null;
+  G.awaitClick = false;
+  G.path = { equipment:null, modifier:null, compatibilizer:null, params:null, score:0, detours:[], steps:0 };
+  G.compatLevel = null;
+  G.testResult = null;
+  G.morphDiagram = null;
+
+  document.getElementById('result-screen').classList.remove('show');
+  document.getElementById('result-fill').style.width = '0%';
+  document.getElementById('scene-image-area').classList.remove('show');
+  document.getElementById('hud').querySelectorAll('.hud-dot').forEach(d => {
+    d.classList.remove('done','fail');
+  });
+  hideChoices();
+  closeKnowledge();
+
+  goTo('start');
+}
+
+// ════════════════════════════════════════════════
+//  初始化
+// ════════════════════════════════════════════════
+window.addEventListener('DOMContentLoaded', () => {
+  // 加载标题背景
+  document.getElementById('title-bg').style.backgroundImage = `url('${IMGS.bg_title}')`;
+  document.getElementById('title-bg').style.backgroundSize = 'cover';
+  document.getElementById('title-bg').style.backgroundPosition = 'center';
+  document.getElementById('dialogue-text').textContent = '';
+  document.getElementById('next-hint').style.opacity = '0';
+});
+</script>
+</body>
+</html>
